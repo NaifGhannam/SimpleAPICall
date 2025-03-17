@@ -8,14 +8,40 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var apiService = APIService()
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationView {
+            VStack {
+                List(apiService.posts) { post in
+                    VStack(alignment: .leading) {
+                        Text(post.title)
+                            .font(.headline)
+                        Text(post.body)
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                    }
+                }
+                .listStyle(InsetGroupedListStyle())
+                
+                Button(action: {
+                    apiService.fetchPosts()
+                }) {
+                    Text("Refresh Data")
+                        .bold()
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                }
+                .padding()
+            }
+            .navigationTitle("Posts")
         }
-        .padding()
+        .onAppear {
+            apiService.fetchPosts()
+        }
     }
 }
 
